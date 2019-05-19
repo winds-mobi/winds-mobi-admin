@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>winds.mobi</title>
+</head>
+
+<body>
+    <div id="error"></div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    $.ajax({
+        method: "POST",
+        url: "{% url 'user:login' %}",
+        data: {
+            ott: "{{ ott }}"
+        },
+        success : function(data) {
+            window.localStorage.token = data.token;
+            window.location.replace("{{ redirect_url }}");
+        },
+        error : function(xhr, status, error) {
+            $("#error").append("Sorry, an error occurred: '" + xhr.responseText + "'");
+            setTimeout(function() {
+                window.location.replace("/");
+            }, 5000);
+        }
+    });
+});
+</script>
+</body>
+</html>
