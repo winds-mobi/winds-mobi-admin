@@ -14,12 +14,11 @@ Django application to manage winds.mobi users and profiles
 
 ### Requirements
 
-Mandatory requirements:
 - python >= 3.6
 - a database supported by [django](https://docs.djangoproject.com/en/2.2/ref/databases/) 
 - mongodb >= 3.0
 
-See [settings.py](https://github.com/winds-mobi/winds-mobi-admin/blob/master/settings.py)
+See [settings.py](https://github.com/winds-mobi/winds-mobi-admin/blob/master/winds_mobi_admin/settings.py)
 
 ### Python environment
 
