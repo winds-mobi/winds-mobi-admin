@@ -5,13 +5,13 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class StationStatus(Enum):
-    unactive = 'unactive'
-    active = 'active'
-    maintenance = 'maintenance'
-    test = 'test'
-    waiting = 'waiting'
-    wintering = 'wintering'
-    moved = 'moved'
+    unactive = 'Unactive'
+    active = 'Active'
+    maintenance = 'Maintenance'
+    test = 'Test'
+    waiting = 'Waiting'
+    wintering = 'Wintering'
+    moved = 'Moved'
 
 
 class Station(models.Model):
@@ -19,7 +19,7 @@ class Station(models.Model):
     short_name = models.CharField(_('Short name'), max_length=50)
     name = models.CharField(_('Name'), max_length=128)
     description = models.TextField(_('Description'), blank=True)
-    status = models.CharField(_('Status'), max_length=32, choices=((e.value, e.name) for e in StationStatus),
+    status = models.CharField(_('Status'), max_length=32, choices=((e.name, e.value) for e in StationStatus),
                               default=StationStatus.active.name)
     latitude = models.FloatField(_('Latitude'))
     longitude = models.FloatField(_('Longitude'))
