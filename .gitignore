@@ -1,3 +1,4 @@
 *.pyc
 .idea/
 winds_mobi_admin/local_settings.py
+google_client_secret.json

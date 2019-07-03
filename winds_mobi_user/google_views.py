@@ -11,10 +11,10 @@ from .views import Oauth2Callback
 
 class GoogleOauth2Callback(Oauth2Callback):
     def get(self, request, *args, **kwargs):
-        with open(settings.GOOGLE_CLIENT_SECRETS) as config_file:
-            client_secrets = json.load(config_file)
+        with open(settings.GOOGLE_CLIENT_SECRET) as config_file:
+            client_secret = json.load(config_file)
             flow = Flow.from_client_config(
-                client_secrets,
+                client_secret,
                 scopes=['profile', 'email'],
                 redirect_uri=reverse('user:google_oauth2callback', request=self.request))
 

@@ -30,6 +30,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'dev')
 DEBUG = os.environ.get('DEBUG', 'True').lower() not in ('false', 'no', '0')
 
 ALLOWED_HOSTS = [s for s in os.environ.get('ALLOWED_HOSTS', '').split(',') if s]
+# https://docs.djangoproject.com/en/2.2/ref/settings/#secure-proxy-ssl-header
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -138,7 +140,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
 ENVIRONMENT = os.environ.get('ENVIRONMENT') or 'development'
 
-GOOGLE_CLIENT_SECRETS = os.environ.get('GOOGLE_CLIENT_SECRETS')
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 FACEBOOK_REDIRECT_URI = os.environ.get('FACEBOOK_REDIRECT_URI')
 FACEBOOK_CLIENT_ID = os.environ.get('FACEBOOK_CLIENT_ID')
 FACEBOOK_CLIENT_SECRET = os.environ.get('FACEBOOK_CLIENT_SECRET')
