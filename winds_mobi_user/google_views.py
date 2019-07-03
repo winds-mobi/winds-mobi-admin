@@ -11,7 +11,7 @@ from .views import Oauth2Callback
 
 class GoogleOauth2Callback(Oauth2Callback):
     def get(self, request, *args, **kwargs):
-        client_secrets = json.loads(settings.GOOGLE_CLIENT_SECRETS)
+        client_secrets = json.load(settings.GOOGLE_CLIENT_SECRETS)
         flow = Flow.from_client_config(
             client_secrets,
             scopes=['profile', 'email'],
