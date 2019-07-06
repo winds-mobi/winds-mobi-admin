@@ -9,12 +9,12 @@ from .views import Oauth2Callback
 
 
 class FacebookOauth2Callback(Oauth2Callback):
-    graph_api_version = 'v2.12'
+    graph_api_version = 'v3.3'
 
     authorization_base_url = 'https://www.facebook.com/dialog/oauth?scope=public_profile&scope=email'
     token_url = f'https://graph.facebook.com/{graph_api_version}/oauth/access_token'
-    me_url = f'https://graph.facebook.com/{graph_api_version}/me?fields=id,name,first_name,last_name,gender,email,link,\
-    birthday,age_range,timezone,website,location,locale,devices'
+    me_url = f'https://graph.facebook.com/{graph_api_version}/me?fields=id,name,first_name,last_name,email,birthday,\
+    timezone,website,location,locale,devices'
 
     def get(self, request, *args, **kwargs):
         facebook = OAuth2Session(settings.FACEBOOK_CLIENT_ID, redirect_uri=settings.FACEBOOK_REDIRECT_URI)
