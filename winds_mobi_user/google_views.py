@@ -15,7 +15,9 @@ class GoogleOauth2Callback(Oauth2Callback):
             client_secret = json.load(config_file)
             flow = Flow.from_client_config(
                 client_secret,
-                scopes=['profile', 'email'],
+                scopes=['openid',
+                        'https://www.googleapis.com/auth/userinfo.profile',
+                        'https://www.googleapis.com/auth/userinfo.email'],
                 redirect_uri=reverse('user:google_oauth2callback', request=self.request))
 
             if 'code' not in self.request.GET:
@@ -25,7 +27,7 @@ class GoogleOauth2Callback(Oauth2Callback):
                 auth_code = self.request.GET['code']
                 token = flow.fetch_token(code=auth_code)
                 user_info = requests.get('https://www.googleapis.com/oauth2/v3/userinfo',
-                                         params={'access_token': token.access_token}).json()
+                                         params={'access_token': token['access_token']}).json()
                 username = f"google-{user_info['sub']}"
                 email = user_info['email'] or ''
 
