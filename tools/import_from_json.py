@@ -29,7 +29,7 @@ for station in stations:
         short_name=station['shortname'],
         name=station['name'],
         description=station['raw_description'],
-        status=get_status(station['status_id']).value,
+        status=get_status(station['status_id']).name,
         latitude=station['lat'],
         longitude=station['long'],
         altitude=station['altitude'],
