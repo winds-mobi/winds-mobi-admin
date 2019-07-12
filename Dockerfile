@@ -10,6 +10,9 @@ WORKDIR /app
 RUN pip install pipenv
 RUN pipenv install --system --deploy
 
+ENV STATIC_ROOT /static/
+RUN python manage.py collectstatic
+
 RUN apt-get --yes --purge autoremove build-essential
 
 EXPOSE 8000
