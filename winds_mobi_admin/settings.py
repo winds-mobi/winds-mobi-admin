@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'winds_mobi_user.apps.UserConfig',
-    'winds_mobi_jdc.apps.JdcConfig'
+    'winds_mobi_jdc.apps.JdcConfig',
+    'winds_mobi_zermatt.apps.ZermattConfig',
 ]
 
 MIDDLEWARE = [

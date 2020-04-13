@@ -20,6 +20,12 @@ Django application to manage winds.mobi users and profiles
 
 See [settings.py](https://github.com/winds-mobi/winds-mobi-admin/blob/master/winds_mobi_admin/settings.py)
 
+#### macOS
+
+- `brew install libpq`
+- `export PATH=/usr/local/opt/libpq/bin:$PATH`
+- `export LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib"`
+
 ### Python environment
 
 - `pipenv install`
