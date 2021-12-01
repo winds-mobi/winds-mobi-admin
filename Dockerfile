@@ -15,5 +15,4 @@ RUN python manage.py collectstatic
 
 RUN apt-get --yes --purge autoremove build-essential
 
-EXPOSE 8000
-CMD ["gunicorn", "--workers=3", "--bind=0.0.0.0:8000", "winds_mobi_admin.wsgi"]
+CMD ["/app/docker-cmd.sh"]
