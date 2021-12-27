@@ -9,7 +9,7 @@ from .views import Oauth2Callback
 
 
 class FacebookOauth2Callback(Oauth2Callback):
-    graph_api_version = 'v3.3'
+    graph_api_version = 'v12.0'
 
     authorization_base_url = 'https://www.facebook.com/dialog/oauth?scope=public_profile&scope=email'
     token_url = f'https://graph.facebook.com/{graph_api_version}/oauth/access_token'

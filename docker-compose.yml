@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:14.1
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=winds
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+
+  admin:
+    build:
+      context: .
+    profiles:
+      - application
+    ports:
+      - "8002:8000"
+    depends_on:
+      - postgres
+    environment:
+      PORT: 8000
+      DEBUG: true
+      ALLOWED_HOSTS: localhost
+      DB_URL: ${DB_URL}
+      MONGODB_URL: ${MONGODB_URL}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      FACEBOOK_REDIRECT_URI: ${FACEBOOK_REDIRECT_URI}
+      FACEBOOK_CLIENT_ID: ${FACEBOOK_CLIENT_ID}
+      FACEBOOK_CLIENT_SECRET: ${FACEBOOK_CLIENT_SECRET}
+    networks:
+      - default
+      - winds-mobi-providers
+
+networks:
+  default:
+    name: winds-mobi-admin
+  winds-mobi-providers:
+    external: true
