@@ -25,8 +25,8 @@ class JWTAuthentication(BaseAuthentication):
             return None
 
         try:
-            payload = jwt.decode(jwt_value, settings.SECRET_KEY)
-        except jwt.ExpiredSignature:
+            payload = jwt.decode(jwt_value, key=settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Signature has expired')
         except jwt.DecodeError:
             raise AuthenticationFailed('Error decoding signature')

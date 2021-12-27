@@ -25,6 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'dev')
+JWT_ALGORITHM = 'HS256'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() not in ('false', 'no', '0')
@@ -48,7 +49,6 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'winds_mobi_user.apps.UserConfig',
-    'winds_mobi_jdc.apps.JdcConfig',
     'winds_mobi_zermatt.apps.ZermattConfig',
 ]
 
@@ -90,9 +90,9 @@ WSGI_APPLICATION = 'winds_mobi_admin.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.parse(
-        os.environ.get('DB_URL') or 'postgres://postgres:postgres@localhost:5432/winds_mobi')
+        os.environ.get('DB_URL') or 'postgres://postgres:postgres@localhost:5432/winds')
 }
-MONGODB_URL = os.environ.get('MONGODB_URL') or 'mongodb://localhost:27017/winds_mobi'
+MONGODB_URL = os.environ.get('MONGODB_URL') or 'mongodb://localhost:27017/winds'
 
 
 # Password validation
@@ -146,13 +146,6 @@ GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 FACEBOOK_REDIRECT_URI = os.environ.get('FACEBOOK_REDIRECT_URI')
 FACEBOOK_CLIENT_ID = os.environ.get('FACEBOOK_CLIENT_ID')
 FACEBOOK_CLIENT_SECRET = os.environ.get('FACEBOOK_CLIENT_SECRET')
-
-
-try:
-    from .local_settings import *  # noqa
-except ImportError:
-    pass
-
 
 sentry_sdk.init(
     dsn=SENTRY_DSN,

@@ -47,15 +47,15 @@ class Login(APIView):
                     'detail': 'Unable to get user'},
                     status=status.HTTP_401_UNAUTHORIZED)
             token = jwt.encode({'username': username, 'exp': datetime.utcnow() + timedelta(days=30)},
-                               settings.SECRET_KEY)
-            return Response({'token': token.decode('utf-8')})
+                               key=settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
+            return Response({'token': token})
         elif username and password:
             user = authenticate(username=username, password=password)
             if user is not None:
                 if user.is_active:
                     token = jwt.encode({'username': username, 'exp': datetime.utcnow() + timedelta(days=30)},
-                                       settings.SECRET_KEY)
-                    return Response({'token': token.decode('utf-8')})
+                                       key=settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
+                    return Response({'token': token})
                 else:
                     return Response({
                         'code': -22,

@@ -1,1 +1,4 @@
-winds_mobi_admin/local_settings.py
+.git
+volumes
+.env*
+static

@@ -1,18 +1,31 @@
-FROM python:3.7-slim-stretch
+FROM python:3.9.9-slim-bullseye AS base
 
-RUN apt-get update; \
-apt-get --yes --no-install-recommends install build-essential libpq-dev; \
-rm -rf /var/lib/apt/lists/*
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 
-ADD . /app
-WORKDIR /app
+RUN apt update; \
+    apt --yes --no-install-recommends install libpq5
 
-RUN pip install pipenv
-RUN pipenv install --system --deploy
+FROM base AS python
+
+RUN apt update; \
+    apt --yes --no-install-recommends install build-essential libpq-dev
+RUN pip install poetry
+
+COPY . .
+RUN POETRY_VIRTUALENVS_IN_PROJECT=true poetry install --no-dev
+
+FROM base AS runtime
+
+ENV PATH="/.venv/bin:$PATH"
+
+COPY . .
+
+FROM runtime AS production
+
+COPY --from=python /.venv /.venv
 
 ENV STATIC_ROOT /static/
 RUN python manage.py collectstatic
 
-RUN apt-get --yes --purge autoremove build-essential
-
-CMD ["/app/docker-cmd.sh"]
+CMD ["/docker-cmd.sh"]
