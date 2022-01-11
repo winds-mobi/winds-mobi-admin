@@ -4,3 +4,5 @@ winds_mobi_admin/local_settings.py
 static/
 google-configs/google_client_secret.json
 /volumes/
+.env
+.env.localhost

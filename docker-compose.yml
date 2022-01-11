@@ -18,13 +18,14 @@ services:
     profiles:
       - application
     ports:
-      - "8002:8000"
+      - "8006:8000"
     depends_on:
       - postgres
     environment:
       PORT: 8000
       DEBUG: true
       ALLOWED_HOSTS: localhost
+      STATIC_URL: ${STATIC_URL}
       DB_URL: ${DB_URL}
       MONGODB_URL: ${MONGODB_URL}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}

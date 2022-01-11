@@ -87,6 +87,12 @@ class Profile(APIView):
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+    def delete(self, request):
+        mongo_db.users.delete_one({'_id': request.user})
+        user = User.objects.get(username=request.user)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ProfileFavorite(APIView):
     """
