@@ -32,55 +32,54 @@ class LoginView(APIView):
     authentication_classes = ()
 
     def post(self, request):
-        ott = request.data.get('ott')
-        username = request.data.get('username')
-        password = request.data.get('password')
+        ott = request.data.get("ott")
+        username = request.data.get("username")
+        password = request.data.get("password")
 
         if ott:
             username = redis.getdel(get_ott_key(ott))
             if not username:
-                return Response({
-                    'code': -11,
-                    'detail': 'Unable to find One Time Token'},
-                    status=status.HTTP_401_UNAUTHORIZED)
+                return Response(
+                    {"code": -11, "detail": "Unable to find One Time Token"}, status=status.HTTP_401_UNAUTHORIZED
+                )
             try:
                 User.objects.get(username=username)
             except User.DoesNotExist:
-                return Response({
-                    'code': -12,
-                    'detail': 'Unable to get user'},
-                    status=status.HTTP_401_UNAUTHORIZED)
-            token = jwt.encode({'username': username, 'exp': datetime.utcnow() + timedelta(days=30)},
-                               key=settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
-            return Response({'token': token})
+                return Response({"code": -12, "detail": "Unable to get user"}, status=status.HTTP_401_UNAUTHORIZED)
+            token = jwt.encode(
+                {"username": username, "exp": datetime.utcnow() + timedelta(days=30)},
+                key=settings.SECRET_KEY,
+                algorithm=settings.JWT_ALGORITHM,
+            )
+            return Response({"token": token})
         elif username and password:
             user = authenticate(username=username, password=password)
             if user is not None:
                 if user.is_active:
-                    token = jwt.encode({'username': username, 'exp': datetime.utcnow() + timedelta(days=30)},
-                                       key=settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
-                    return Response({'token': token})
+                    token = jwt.encode(
+                        {"username": username, "exp": datetime.utcnow() + timedelta(days=30)},
+                        key=settings.SECRET_KEY,
+                        algorithm=settings.JWT_ALGORITHM,
+                    )
+                    return Response({"token": token})
                 else:
-                    return Response({
-                        'code': -22,
-                        'detail': 'The password is valid, but the account has been disabled'},
-                        status=status.HTTP_401_UNAUTHORIZED)
+                    return Response(
+                        {"code": -22, "detail": "The password is valid, but the account has been disabled"},
+                        status=status.HTTP_401_UNAUTHORIZED,
+                    )
             else:
-                return Response({
-                    'code': -21,
-                    'detail': 'Invalid username or password'},
-                    status=status.HTTP_401_UNAUTHORIZED)
+                return Response(
+                    {"code": -21, "detail": "Invalid username or password"}, status=status.HTTP_401_UNAUTHORIZED
+                )
         else:
-            return Response({
-                'code': -1,
-                'detail': 'Bad parameters'},
-                status=status.HTTP_400_BAD_REQUEST)
+            return Response({"code": -1, "detail": "Bad parameters"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProfileView(APIView):
     """
     Get the profile of authenticated user
     """
+
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsJWTAuthenticated,)
 
@@ -120,6 +119,7 @@ class ProfileFavoriteView(APIView):
     """
     Manage favorites stations list
     """
+
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsJWTAuthenticated,)
 
@@ -127,7 +127,7 @@ class ProfileFavoriteView(APIView):
         user = User.objects.get(username=request.user)
         with transaction.atomic():
             profile, created = Profile.objects.select_for_update().get_or_create(user=user)
-            favorites = profile.data.setdefault('favorites', [])
+            favorites = profile.data.setdefault("favorites", [])
             if station_id not in favorites:
                 favorites.append(station_id)
                 profile.save()
@@ -137,8 +137,8 @@ class ProfileFavoriteView(APIView):
         user = User.objects.get(username=request.user)
         with transaction.atomic():
             profile = Profile.objects.select_for_update().get(user=user)
-            if profile and 'favorites' in profile.data:
-                favorites = profile.data['favorites']
+            if profile and "favorites" in profile.data:
+                favorites = profile.data["favorites"]
                 if station_id in favorites:
                     favorites.remove(station_id)
                     profile.save()
@@ -146,13 +146,13 @@ class ProfileFavoriteView(APIView):
 
 
 class Oauth2Callback(TemplateView):
-    template_name = 'winds_mobi_user/oauth2_callback.html'
+    template_name = "winds_mobi_user/oauth2_callback.html"
 
     def authenticate(self):
         pass
 
     def save_user_auth(self, provider, provider_id, email, user_info):
-        username = f'{provider}-{provider_id}'  # For now, we create a django account for each social auth
+        username = f"{provider}-{provider_id}"  # For now, we create a django account for each social auth
         try:
             social_auth = SocialAuth.objects.get(provider=provider, provider_id=provider_id)
             user = social_auth.user
@@ -166,7 +166,7 @@ class Oauth2Callback(TemplateView):
             SocialAuth.objects.create(provider=provider, provider_id=provider_id, user=user, data=user_info)
 
         # Generate One Time Token for API authentication
-        ott = binascii.hexlify(os.urandom(20)).decode('ascii')
+        ott = binascii.hexlify(os.urandom(20)).decode("ascii")
         redis.set(get_ott_key(ott), username, ex=30)
         return ott
 

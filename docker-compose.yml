@@ -39,6 +39,7 @@ services:
       FACEBOOK_CLIENT_ID: ${FACEBOOK_CLIENT_ID}
       FACEBOOK_CLIENT_SECRET: ${FACEBOOK_CLIENT_SECRET}
     networks:
+      - default
       - winds-mobi-providers
 
 networks:

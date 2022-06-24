@@ -15,25 +15,37 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='SocialAuth',
+            name="SocialAuth",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('provider', models.CharField(max_length=50, verbose_name='Provider')),
-                ('provider_id', models.CharField(max_length=50, verbose_name='Provider id')),
-                ('data', models.JSONField(verbose_name='Data')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='social_auths', to=settings.AUTH_USER_MODEL)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("provider", models.CharField(max_length=50, verbose_name="Provider")),
+                ("provider_id", models.CharField(max_length=50, verbose_name="Provider id")),
+                ("data", models.JSONField(verbose_name="Data")),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="social_auths",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data', models.JSONField(default=dict, verbose_name='Data')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='profile', to=settings.AUTH_USER_MODEL)),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("data", models.JSONField(default=dict, verbose_name="Data")),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="profile", to=settings.AUTH_USER_MODEL
+                    ),
+                ),
             ],
         ),
         migrations.AddConstraint(
-            model_name='socialauth',
-            constraint=models.UniqueConstraint(fields=('provider', 'provider_id'), name='unique_provider_id'),
+            model_name="socialauth",
+            constraint=models.UniqueConstraint(fields=("provider", "provider_id"), name="unique_provider_id"),
         ),
     ]

@@ -12,21 +12,21 @@ from winds_mobi_user.models import Profile, SocialAuth
 
 @admin.register(SocialAuth)
 class SocialAuthAdmin(admin.ModelAdmin):
-    list_display = ('id', 'provider', 'provider_id', 'user_url')
-    readonly_fields = ('provider', 'provider_id', 'data')
+    list_display = ("id", "provider", "provider_id", "user_url")
+    readonly_fields = ("provider", "provider_id", "data")
 
-    @display(description=_('User url'))
+    @display(description=_("User url"))
     def user_url(self, obj):
-        url = reverse('admin:auth_user_change', args=[obj.user.id])
+        url = reverse("admin:auth_user_change", args=[obj.user.id])
         return format_html(f"<a href='{url}'>{obj.user.username}</a>", url=url)
 
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('username',)
-    search_fields = ('data__favorites',)
+    list_display = ("username",)
+    search_fields = ("data__favorites",)
 
-    @display(description=_('Username'))
+    @display(description=_("Username"))
     def username(self, obj):
         return obj.user.username
 
@@ -41,11 +41,11 @@ class SocialAuthInline(admin.StackedInline):
 
 
 class CustomUserAdmin(UserAdmin):
-    list_display = list(UserAdmin.list_display) + ['last_login', 'date_joined']
+    list_display = list(UserAdmin.list_display) + ["last_login", "date_joined"]
     inlines = (ProfileInline, SocialAuthInline)
 
     def get_ordering(self, request):
-        return F('last_login').desc(nulls_last=True),
+        return (F("last_login").desc(nulls_last=True),)
 
 
 admin.site.unregister(User)
