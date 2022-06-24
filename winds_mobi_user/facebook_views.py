@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from requests_oauthlib import OAuth2Session
 from requests_oauthlib.compliance_fixes import facebook_compliance_fix
 
-from .views import Oauth2Callback
+from winds_mobi_user.views import Oauth2Callback
 
 
 class FacebookOauth2Callback(Oauth2Callback):
@@ -27,10 +27,7 @@ class FacebookOauth2Callback(Oauth2Callback):
             auth_code = self.request.GET['code']
             facebook.fetch_token(self.token_url, client_secret=settings.FACEBOOK_CLIENT_SECRET, code=auth_code)
             user_info = json.loads(facebook.get(self.me_url).text)
-            username = f"facebook-{user_info['id']}"
-            email = user_info['email'] or ''
-
-            ott = self.save_user(username, email, user_info)
+            ott = self.save_user_auth("facebook", user_info['id'], user_info['email'], user_info)
             context = {
                 'ott': ott,
                 'redirect_url': '/stations/list'

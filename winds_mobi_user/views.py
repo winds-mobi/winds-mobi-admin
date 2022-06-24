@@ -1,23 +1,28 @@
 import binascii
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import jwt
 from django.conf import settings
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
-from django.utils import timezone
+from django.contrib.auth import authenticate, get_user_model
+from django.db import transaction
 from django.views.generic import TemplateView
-from pymongo import ASCENDING
-from pymongo import MongoClient, uri_parser
+from redis.client import Redis
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from winds_mobi_admin.authentication import JWTAuthentication, IsJWTAuthenticated
+from winds_mobi_admin.authentication import IsJWTAuthenticated, JWTAuthentication
+from winds_mobi_user.models import Profile, SocialAuth
+
+User = get_user_model()
 
 
-class Login(APIView):
+def get_ott_key(ott):
+    return f"login-ott/{ott}"
+
+
+class LoginView(APIView):
     """
     Login into API with a One Time Token or a Django username/password
     Return a JWT token
@@ -32,13 +37,12 @@ class Login(APIView):
         password = request.data.get('password')
 
         if ott:
-            ott_doc = mongo_db.login_ott.find_one_and_delete({'_id': ott})
-            if not ott_doc:
+            username = redis.getdel(get_ott_key(ott))
+            if not username:
                 return Response({
                     'code': -11,
                     'detail': 'Unable to find One Time Token'},
                     status=status.HTTP_401_UNAUTHORIZED)
-            username = ott_doc['username']
             try:
                 User.objects.get(username=username)
             except User.DoesNotExist:
@@ -73,7 +77,7 @@ class Login(APIView):
                 status=status.HTTP_400_BAD_REQUEST)
 
 
-class Profile(APIView):
+class ProfileView(APIView):
     """
     Get the profile of authenticated user
     """
@@ -81,20 +85,38 @@ class Profile(APIView):
     permission_classes = (IsJWTAuthenticated,)
 
     def get(self, request):
-        profile = mongo_db.users.find_one(request.user)
+        user = User.objects.get(username=request.user)
+
+        profile = Profile.objects.filter(user=user).first()
+        profile_data = {}
         if profile:
-            return Response(profile)
-        else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            profile_data.update(profile.data)
+
+        social_auth = SocialAuth.objects.filter(user=user).first()
+        if social_auth:
+            if social_auth.provider == "facebook":
+                profile_data["picture"] = f"https://graph.facebook.com/{social_auth.provider_id}/picture"
+                profile_data["display-name"] = social_auth.data.get("first_name")
+            elif social_auth.provider == "google":
+                profile_data["picture"] = social_auth.data.get("picture")
+                profile_data["display-name"] = social_auth.data.get("given_name")
+            else:
+                profile_data["display-name"] = user.username
+
+        # Compatibility with winds-mobi-js-client
+        profile_data["_id"] = user.username
+        if social_auth:
+            profile_data["user-info"] = social_auth.data
+
+        return Response(profile_data)
 
     def delete(self, request):
-        mongo_db.users.delete_one({'_id': request.user})
         user = User.objects.get(username=request.user)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProfileFavorite(APIView):
+class ProfileFavoriteView(APIView):
     """
     Manage favorites stations list
     """
@@ -102,15 +124,24 @@ class ProfileFavorite(APIView):
     permission_classes = (IsJWTAuthenticated,)
 
     def post(self, request, station_id):
-        mongo_db.users.update_one({'_id': request.user},
-                                  {'$addToSet': {'favorites': station_id}},
-                                  upsert=True)
+        user = User.objects.get(username=request.user)
+        with transaction.atomic():
+            profile, created = Profile.objects.select_for_update().get_or_create(user=user)
+            favorites = profile.data.setdefault('favorites', [])
+            if station_id not in favorites:
+                favorites.append(station_id)
+                profile.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request, station_id):
-        mongo_db.users.update_one({'_id': request.user},
-                                  {'$pull': {'favorites': station_id}},
-                                  upsert=True)
+        user = User.objects.get(username=request.user)
+        with transaction.atomic():
+            profile = Profile.objects.select_for_update().get(user=user)
+            if profile and 'favorites' in profile.data:
+                favorites = profile.data['favorites']
+                if station_id in favorites:
+                    favorites.remove(station_id)
+                    profile.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -120,28 +151,24 @@ class Oauth2Callback(TemplateView):
     def authenticate(self):
         pass
 
-    def save_user(self, username, email, user_info):
-        # Save user in Django
+    def save_user_auth(self, provider, provider_id, email, user_info):
+        username = f'{provider}-{provider_id}'  # For now, we create a django account for each social auth
         try:
-            user = User.objects.get(username=username)
+            social_auth = SocialAuth.objects.get(provider=provider, provider_id=provider_id)
+            user = social_auth.user
             user.email = email
+            user.data = user_info
             # Update last_login field when a user does a social login (jwt token expired, ...)
-            user.last_login = timezone.now()
-        except User.DoesNotExist:
-            user = User(username=username, email=email)
-        user.save()
-
-        # Save user_info
-        mongo_db.users.update_one({'_id': username}, {'$set': {'user-info': user_info}}, upsert=True)
+            user.last_login = datetime.now(timezone.utc)
+            user.save()
+        except SocialAuth.DoesNotExist:
+            user, created = User.objects.get_or_create(username=username, defaults={"email": email})
+            SocialAuth.objects.create(provider=provider, provider_id=provider_id, user=user, data=user_info)
 
         # Generate One Time Token for API authentication
-        mongo_db.login_ott.create_index([('createdAt', ASCENDING)], expireAfterSeconds=30)
         ott = binascii.hexlify(os.urandom(20)).decode('ascii')
-        mongo_db.login_ott.insert_one({'_id': ott, 'username': username, 'createdAt': datetime.utcnow()})
-
+        redis.set(get_ott_key(ott), username, ex=30)
         return ott
 
 
-uri = uri_parser.parse_uri(settings.MONGODB_URL)
-mongo_client = MongoClient(uri['nodelist'][0][0], uri['nodelist'][0][1])
-mongo_db = mongo_client[uri['database']]
+redis = Redis.from_url(url=settings.REDIS_URL, decode_responses=True)

@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from google_auth_oauthlib.flow import Flow
 from rest_framework.reverse import reverse
 
-from .views import Oauth2Callback
+from winds_mobi_user.views import Oauth2Callback
 
 
 class GoogleOauth2Callback(Oauth2Callback):
@@ -28,10 +28,7 @@ class GoogleOauth2Callback(Oauth2Callback):
                 token = flow.fetch_token(code=auth_code)
                 user_info = requests.get('https://www.googleapis.com/oauth2/v3/userinfo',
                                          params={'access_token': token['access_token']}).json()
-                username = f"google-{user_info['sub']}"
-                email = user_info['email'] or ''
-
-                ott = self.save_user(username, email, user_info)
+                ott = self.save_user_auth('google', user_info['sub'], user_info['email'], user_info)
                 context = {
                     'ott': ott,
                     'redirect_url': '/stations/list'

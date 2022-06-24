@@ -89,11 +89,12 @@ WSGI_APPLICATION = 'winds_mobi_admin.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.parse(
-        os.environ.get('DB_URL') or 'postgres://postgres:postgres@localhost:5432/winds')
+    'default': dj_database_url.parse(os.environ['DB_URL'])
 }
-MONGODB_URL = os.environ.get('MONGODB_URL') or 'mongodb://localhost:27017/winds'
+REDIS_URL = os.environ['REDIS_URL']
+MONGODB_URL = os.environ['MONGODB_URL']
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -118,13 +119,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Europe/Zurich'
 
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 

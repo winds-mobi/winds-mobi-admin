@@ -1,33 +1,33 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
     <title>winds.mobi</title>
 </head>
-
 <body>
-    <div id="error"></div>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script>
-$(document).ready(function() {
-    $.ajax({
-        method: "POST",
-        url: "{% url 'user:login' %}",
-        data: {
-            ott: "{{ ott }}"
-        },
-        success : function(data) {
-            window.localStorage.token = data.token;
-            window.location.replace("{{ redirect_url }}");
-        },
-        error : function(xhr, status, error) {
-            $("#error").append("Sorry, an error occurred: '" + xhr.responseText + "'");
-            setTimeout(function() {
-                window.location.replace("/");
-            }, 5000);
-        }
-    });
-});
-</script>
+    <div id="error"/>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch("{% url 'user:login' %}", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ott: "{{ ott }}"}),
+            })
+            .then((response) => {
+                if (!response.ok) throw Error(response.statusText);
+                return response.json();
+            })
+            .then((data) => {
+                window.localStorage.setItem("token", data.token);
+                window.location.replace("{{ redirect_url }}");
+            })
+            .catch((error) => {
+                document.getElementById("error").append("Sorry, an error occurred: '" + error.message + "'");
+                setTimeout(() => window.location.replace("/"), 5000);
+            });
+        });
+    </script>
 </body>
 </html>
