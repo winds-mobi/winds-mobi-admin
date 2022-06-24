@@ -6,16 +6,15 @@ from rest_framework.permissions import BasePermission
 
 
 class JWTAuthentication(BaseAuthentication):
-
     def get_jwt_value(self, request):
-        auth = request.META.get('HTTP_AUTHORIZATION', '').split()
+        auth = request.META.get("HTTP_AUTHORIZATION", "").split()
         if not auth:
             return None
 
         if len(auth) == 1:
-            raise AuthenticationFailed('Invalid Authorization header: no credentials provided')
+            raise AuthenticationFailed("Invalid Authorization header: no credentials provided")
         elif len(auth) > 2:
-            raise AuthenticationFailed('Invalid Authorization header: credentials string should not contain spaces')
+            raise AuthenticationFailed("Invalid Authorization header: credentials string should not contain spaces")
 
         return auth[1]
 
@@ -27,13 +26,13 @@ class JWTAuthentication(BaseAuthentication):
         try:
             payload = jwt.decode(jwt_value, key=settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Signature has expired')
+            raise AuthenticationFailed("Signature has expired")
         except jwt.DecodeError:
-            raise AuthenticationFailed('Error decoding signature')
+            raise AuthenticationFailed("Error decoding signature")
         except jwt.InvalidTokenError:
             raise AuthenticationFailed()
 
-        return payload['username'], jwt_value
+        return payload["username"], jwt_value
 
 
 class IsJWTAuthenticated(BasePermission):
