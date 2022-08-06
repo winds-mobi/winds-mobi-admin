@@ -24,7 +24,7 @@ psycopg2 = "2.9.3"
 pymongo = "3.12.2"
 pyjwt = "2.4.0"
 redis = "4.3.3"
-sentry-sdk = "1.6.0"
+sentry-sdk = "1.9.2"
 whitenoise = "5.3.0"
 
 [tool.poetry.dev-dependencies]
