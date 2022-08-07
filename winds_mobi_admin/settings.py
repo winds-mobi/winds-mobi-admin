@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "winds_mobi_user.apps.UserConfig",
     "winds_mobi_zermatt.apps.ZermattConfig",
+    "winds_mobi_windy.apps.WindyConfig",
 ]
 
 MIDDLEWARE = [
@@ -72,7 +73,6 @@ DATABASES = {
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 REDIS_URL = os.environ.get("REDIS_URL", None)
-MONGODB_URL = os.environ.get("MONGODB_URL", None)
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -108,7 +108,7 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "default": {"format": "%(asctime)s %(levelname)s %(name)s | %(message)s", "datefmt": "%Y-%m-%dT%H:%M:%S%z"},
+        "default": {"format": "%(asctime)s %(levelname)s %(name)s | %(message)s", "datefmt": "%Y-%m-%d %H:%M:%S%z"},
     },
     "handlers": {
         "console": {
