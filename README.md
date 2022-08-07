@@ -1,7 +1,6 @@
 winds.mobi - real-time weather observations
 ===========================================
 
-[![DockerHub](https://img.shields.io/docker/cloud/automated/windsmobi/winds-mobi-admin)](https://cloud.docker.com/u/windsmobi/repository/docker/windsmobi/winds-mobi-admin)
 [![Follow us on https://www.facebook.com/WindsMobi/](https://img.shields.io/badge/facebook-follow_us-blue)](https://www.facebook.com/WindsMobi/)
 
 [winds.mobi](http://winds.mobi): Paraglider pilot, kitesurfer, check real-time weather conditions of your favorite spots
@@ -10,36 +9,57 @@ on your smartphone, your tablet or your computer.
 winds-mobi-admin
 --------------------
 
-Django application to manage winds.mobi users and profiles
+Django application to administrate winds.mobi:
 
-### Requirements
+- manage users and profiles
+- configure Zermatt stations
+- configure Windy stations
 
-- python >= 3.6
-- a database supported by [django](https://docs.djangoproject.com/en/2.2/ref/databases/) 
-- mongodb >= 3.0
+### Dependencies
 
-See [settings.py](https://github.com/winds-mobi/winds-mobi-admin/blob/master/winds_mobi_admin/settings.py)
+- python 3.9 and poetry 
+- postgres 
+- redis
 
-#### macOS
+See [settings.py](https://github.com/winds-mobi/winds-mobi-admin/blob/main/winds_mobi_admin/settings.py)
+
+### Run the project with docker compose (simple way)
+
+Create a `.env` file from `.env.template` and, optionally, fill the missing secrets for Facebook and Google social
+authentications.
+
+- `docker compose --profile=application up --build`
+
+### Run the project locally on macOS
+
+#### Install dependencies
 
 - `brew install libpq`
 - `export PATH=/usr/local/opt/libpq/bin:$PATH`
 - `export LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib"`
 
-### Python environment
+#### Python environment
 
-- `pipenv install`
-- `pipenv shell`
+- `poetry install`
+- `poetry shell`
 
-### Create db schema
+Create a `.env.localhost` file from `.env.localhost.template` and fill the missing secrets.
 
-- `python manage.py migrate`
+#### Create db schema
 
-### Run the server
+- `dotenv -f .env.localhost run python manage.py migrate`
 
-- `python manage.py runserver`
+#### Start external services with docker compose
+
+Create a `.env` file from `.env.template`.
+
+- `docker compose up`
+
+#### Run the server
+
+- `dotenv -f .env.localhost run python manage.py runserver 8006`
 
 Licensing
 ---------
 
-Please see the file called [LICENSE.txt](https://github.com/winds-mobi/winds-mobi-admin/blob/master/LICENSE.txt)
+Please see the file called [LICENSE.txt](https://github.com/winds-mobi/winds-mobi-admin/blob/main/LICENSE.txt)
