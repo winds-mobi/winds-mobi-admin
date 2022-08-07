@@ -15,7 +15,7 @@ Django application to administrate winds.mobi:
 - configure Zermatt stations
 - configure Windy stations
 
-### Requirements
+### Dependencies
 
 - python 3.9 and poetry 
 - postgres 
@@ -23,11 +23,12 @@ Django application to administrate winds.mobi:
 
 See [settings.py](https://github.com/winds-mobi/winds-mobi-admin/blob/main/winds_mobi_admin/settings.py)
 
-### Run the project with docker compose
+### Run the project with docker compose (simple way)
 
-Create a `.env` file from `.env.template` and fill the missing secrets.
+Create a `.env` file from `.env.template` and, optionally, fill the missing secrets for Facebook and Google social
+authentications.
 
-- `docker compose --profile=application up`
+- `docker compose --profile=application up --build`
 
 ### Run the project locally on macOS
 
