@@ -9,8 +9,8 @@ RUN apt update; \
 FROM base AS python
 
 RUN apt update; \
-    apt --yes --no-install-recommends install build-essential libpq-dev
-RUN pip install poetry
+    apt --yes --no-install-recommends install build-essential crul libpq-dev
+RUN curl -sSL https://install.python-poetry.org | python - --version 1.3.2
 
 COPY . .
 RUN POETRY_VIRTUALENVS_IN_PROJECT=true poetry install --no-dev
