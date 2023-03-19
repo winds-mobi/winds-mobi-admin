@@ -484,6 +484,24 @@ files = [
 ]
 
 [[package]]
+name = "isort"
+version = "5.12.0"
+description = "A Python utility / library to sort Python imports."
+category = "dev"
+optional = false
+python-versions = ">=3.8.0"
+files = [
+    {file = "isort-5.12.0-py3-none-any.whl", hash = "sha256:f84c2818376e66cf843d497486ea8fed8700b340f308f076c6fb1229dff318b6"},
+    {file = "isort-5.12.0.tar.gz", hash = "sha256:8bef7dde241278824a6d83f44a544709b065191b95b6e50894bdc722fcba0504"},
+]
+
+[package.extras]
+colors = ["colorama (>=0.4.3)"]
+pipfile-deprecated-finder = ["pip-shims (>=0.5.2)", "pipreqs", "requirementslib"]
+plugins = ["setuptools"]
+requirements-deprecated-finder = ["pip-api", "pipreqs"]
+
+[[package]]
 name = "markuppy"
 version = "1.14"
 description = "An HTML/XML generator"
@@ -1179,4 +1197,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "3.9.*"
-content-hash = "98b91e06c52cc4110bc21b74ae7ae00fd09970a9a51b43d7694661c551d03e97"
+content-hash = "a31839228b7aa0d22dee9f395ddb6a42d9bdb6894140d8ff0aad3482c63b0e0a"
