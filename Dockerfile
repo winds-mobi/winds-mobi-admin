@@ -9,7 +9,7 @@ RUN apt update; \
 FROM base AS python
 
 RUN apt update; \
-    apt --yes --no-install-recommends install build-essential crul libpq-dev
+    apt --yes --no-install-recommends install build-essential curl libpq-dev
 RUN curl -sSL https://install.python-poetry.org | python - --version 1.3.2
 
 COPY . .

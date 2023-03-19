@@ -1,35 +1,9 @@
 name: Test project
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
+on: [ push, pull_request ]
 
 jobs:
   test-python:
-    name: Lint and test
-    runs-on: ubuntu-latest
-    env:
-      PYTHON_VERSION: "3.9"
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install python dependencies with poetry
-        run: |
-          pip install poetry
-          poetry install
-
-      - name: Run python linters
-        run: |
-          poetry run black --check .
-          poetry run flake8 .
-
-      - name: Run python tests
-        run: poetry run pytest
+    uses: winds-mobi/winds-mobi-cicd/.github/workflows/test-python.yaml@main
+    with:
+      python_version: 3.9.13
+      poetry_version: 1.3.2
