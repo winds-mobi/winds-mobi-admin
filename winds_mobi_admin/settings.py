@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+    "import_export",
     "winds_mobi_user.apps.UserConfig",
     "winds_mobi_zermatt.apps.ZermattConfig",
     "winds_mobi_windy.apps.WindyConfig",
