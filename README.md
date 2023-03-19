@@ -12,8 +12,8 @@ winds-mobi-admin
 Django application to administrate winds.mobi:
 
 - manage users and profiles
-- configure Zermatt stations
-- configure Windy stations
+- configure [Zermatt](https://github.com/winds-mobi/winds-mobi-providers/blob/main/providers/zermatt.py) stations
+- configure [Windy](https://github.com/winds-mobi/winds-mobi-providers/blob/main/providers/windy.py) stations
 
 ### Dependencies
 
