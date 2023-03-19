@@ -2,13 +2,14 @@ import logging
 
 from django.conf import settings
 from django.db import migrations
-from pymongo import MongoClient, uri_parser
 
 log = logging.getLogger(__name__)
 
 
 def migrate_user_profiles(apps, schema_editor):
     if hasattr(settings, "MONGODB_URL") and settings.MONGODB_URL:
+        from pymongo import MongoClient, uri_parser
+
         uri = uri_parser.parse_uri(settings.MONGODB_URL)
         mongo_client = MongoClient(uri["nodelist"][0][0], uri["nodelist"][0][1])
         mongo_db = mongo_client[uri["database"]]
