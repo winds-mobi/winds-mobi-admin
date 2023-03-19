@@ -13,7 +13,7 @@ RUN apt update; \
 RUN curl -sSL https://install.python-poetry.org | python - --version 1.3.2
 
 COPY . .
-RUN POETRY_VIRTUALENVS_IN_PROJECT=true poetry install --no-dev
+RUN POETRY_VIRTUALENVS_IN_PROJECT=true /root/.local/bin/poetry install --no-dev
 
 FROM base AS runtime
 
