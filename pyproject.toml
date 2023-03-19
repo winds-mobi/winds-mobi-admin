@@ -26,9 +26,10 @@ redis = "4.3.4"
 sentry-sdk = "1.17.0"
 whitenoise = "6.2.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 black = "22.6.0"
 flake8 = "5.0.4"
+isort = "5.12.0"
 pytest = "7.1.2"
 python-dotenv = "^1.0.0"
 
@@ -40,3 +41,8 @@ build-backend = "poetry.core.masonry.api"
 line-length = 120
 force-exclude  = '''
 '''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+skip_glob = ["**/migrations"]
