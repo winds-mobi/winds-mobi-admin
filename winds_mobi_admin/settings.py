@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "winds_mobi_user.apps.UserConfig",
     "winds_mobi_zermatt.apps.ZermattConfig",
     "winds_mobi_windy.apps.WindyConfig",
+    "winds_mobi_wunderground.apps.WUndergroundConfig",
 ]
 
 MIDDLEWARE = [
